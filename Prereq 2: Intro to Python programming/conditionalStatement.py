@@ -1,13 +1,11 @@
 # Conditional statements
-joystick_in = "up"             # we first get the joystick input
+sensor_output = 135;
 
-if joystick_in == "right":
-    print("moving 1st joint in positive direction")
-elif joystick_in == "left":
-    print("moving 1st joint in negative direction")
-elif joystick_in == "up":
-    print("moving the 2nd joint in positive direction")
-elif joystick_in == "down":
-    print("moving the 2nd joint in the negative direction")
+if sensor_output == 100
+    print("Robot is in the right position")
+elif sensor_output > 100:
+    print("Robot is too far away")
+elif sensor_output < 100 and sensor_output >= 0 :
+    print("Robot is too close away")
 else:
-    print("the joystick is in the neutral position, no movement")
+    print("Sensor Error")
