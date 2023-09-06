@@ -1,4 +1,3 @@
 # Modules
-from functionsAndReturnStatements import my_function, my_variable
-my_function()
-print(my_variable)
+from functionsAndReturnStatements import Conjugate, Polar
+print(Conjugate((8))
