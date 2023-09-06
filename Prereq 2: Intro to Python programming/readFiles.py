@@ -1,4 +1,4 @@
-
+# Reading Files
 with open("python/sensor_data.txt", "r") as file:  # Open File
     # now iterate over each line
     for line in file:
