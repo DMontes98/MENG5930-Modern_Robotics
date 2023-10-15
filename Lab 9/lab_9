@@ -1,0 +1,382 @@
+import numpy as np 
+import math 
+
+
+matrix = []
+text = ""
+vector = []
+
+
+
+# gets the rotation matrix R and returns its inverse
+def R_inverse():
+    # X = np.array([ 0, 0, 1])
+    # Y = np.array([-1, 0, 0])
+    # Z = np.array([ 0,-1, 0])
+
+    # R = np.array([X,Y,Z])
+    
+    global text
+    text = "Rotation Matrix"
+    enter_matrix()
+    R = np.array(matrix)
+    
+    R_transpose = R.transpose()
+    R_inv = np.linalg.inv(R)
+    
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 1")
+    print("R")
+    print (R)
+    print()
+    print("R_transpose")
+    print (R_transpose)
+    print()
+    print("R_inverse")
+    print (R_inv)
+
+# gets a 3-vector w_hat and gives back the 3x3 skew-symmetric matrix representation of it.
+def skew_symetric_matrix():
+    # wx = 1
+    # wy = 2
+    # wz = 0
+
+    # w_hat = np.array([wx,wy,wz])
+
+    global text
+    text = "w_hat"
+    enter_vector()
+    wx = vector[0]
+    wy = vector[1]
+    wz = vector[2]
+
+    symetric_matrix = np.array([[0,-wz, wy],
+                                [wz,0,-wx],
+                                [-wy,wx,0]])
+    
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 2")
+    print("skew symetric matrix")
+    print(symetric_matrix)
+
+# gets the angle theta and the unit axis of rotation W_hat. Returns the rotation matrix representing the rotation about w_hat by theta.
+# This function should be able to handle the special cases of rotation operators about x_hat, y_hat, and z_hat. 
+# Use Rodrigues' formula to write this function.
+def rotation_matrix():
+    # wx = 1
+    # wy = 2
+    # wz = 0
+    # w_hat = np.array([wx,wy,wz])
+    
+    global text
+    text = "w_hat"
+    enter_vector()
+    wx = vector[0]
+    wy = vector[1]
+    wz = vector[2]
+
+    R = np.array([[ 0,-wz,  wy],
+                  [wz,  0, -wx],
+                  [-wy, wx,  0]])
+    
+    r11 = R[0][0]
+    r22 = R[1][1]
+    r33 = R[2][2]
+    
+    theta1 = np.arccos((r11+r22+r33-1)/2)
+    theta_deg1 = math.degrees(theta1)
+
+    theta2 = -theta1
+    theta_deg2 = math.degrees(theta2)
+
+    w1 = 1/(2*np.sin(theta1)) * (R - R.transpose())
+    w2 = 1/(2*np.sin(theta2)) * (R - R.transpose())
+    
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 3")
+    print("theta1 in degrees = ", theta_deg1)
+
+    print()
+    print("theta2 in degrees = ", theta_deg2)
+    
+    print()
+    print("[w1]: ")
+    print (w1)
+
+    print()
+    print("[w2]: ")
+    print (w2)
+
+# gets the 3x3 skew-symmetric matrix representation of w_hat and returns the 3-verctor w_hat.
+def w_hat_vector():
+    # theta = math.sqrt(5)
+    # symetric_matrix = np.array([[ 0,         0,         2/theta],
+    #                             [ 0,         0,        -1/theta],
+    #                             [-1/theta,   1/theta,         0]])
+        
+    global text
+    text = "Skew-symetric Matrix"
+    enter_matrix()
+    symetric_matrix = np.array(matrix)
+    
+    
+    wx = symetric_matrix[2][1]
+    wy = symetric_matrix[0][2]
+    wz = symetric_matrix[1][0]
+
+    w_hat = np.array([wx,wy,wz])
+
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 4")
+    print("skew symetric matrix")
+    print(symetric_matrix)
+    print()
+    print("3-vector w_hat: ", w_hat)
+
+# gets the 3-vector exponential coordinates for rotation w_hat_theta and extracts the rotation axis w_hat and the rotation amount theta.
+def w_hat_and_rotation_theta():
+    # w_hat_theta_vector = np.array([1,2,0])
+    
+    # wx = w_hat_theta_vector[0]
+    # wy = w_hat_theta_vector[1]
+    # wz = w_hat_theta_vector[2]
+
+    global text
+    text = "exponential coordinates"
+    enter_vector()
+    wx = vector[0]
+    wy = vector[1]
+    wz = vector[2]
+
+    w_hat_theta_matrix = np.array([[ 0, -wz,  wy],
+                                   [ wz,  0, -wx],
+                                   [-wy,  wx,  0]])
+    
+    theta = math.sqrt(wx**2 + wy**2 + wz**2)
+
+    w_hat = w_hat_theta_matrix/theta
+
+    I = np.identity(3)
+
+    rotation_matrix = I + math.sin(theta) * w_hat + (1 - math.cos(theta)) * w_hat * w_hat
+
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 5")
+    print("w_hat: ")
+    print(w_hat)
+    print("Theta in radians = ", theta)
+    print("Theta in degrees = ", math.degrees(theta))
+    print("Rotation matrix: ")
+    print(rotation_matrix)
+
+# gets a 3x3 rotation matrix R and finds the axis w_hat, and angle theta representation of it.
+def w_hat_bracket_and_theta():
+    # R = np.array([[ 0,  0, 1],
+    #               [-1,  0, 0],
+    #               [ 0, -1, 0]])
+    
+    global text
+    text = "Rotation Matrix"
+    enter_matrix()
+    R = matrix
+    
+    r11 = R[0][0]
+    r22 = R[1][1]
+    r33 = R[2][2]
+
+    theta1 = np.arccos((r11+r22+r33-1)/2)
+    theta_deg1 = math.degrees(theta1)
+
+    theta2 = -theta1
+    theta_deg2 = math.degrees(theta2)
+
+    w_hat1_for_theta1 = math.sqrt(r11-math.cos(theta1)/(1-math.cos(theta1)))
+    w_hat2_for_theta1 = math.sqrt(r22-math.cos(theta1)/(1-math.cos(theta1)))
+    w_hat3_for_theta1 = math.sqrt(r33-math.cos(theta1)/(1-math.cos(theta1)))
+
+    w_hat_bracket1 = np.array([w_hat1_for_theta1, w_hat2_for_theta1, w_hat3_for_theta1])
+
+
+    w_hat1_for_theta2 = math.sqrt(r11-math.cos(theta1)/(1-math.cos(theta1)))
+    w_hat2_for_theta2 = math.sqrt(r22-math.cos(theta1)/(1-math.cos(theta1)))
+    w_hat3_for_theta2 = math.sqrt(r33-math.cos(theta1)/(1-math.cos(theta1)))
+
+    w_hat_bracket2 = np.array([w_hat1_for_theta2, w_hat2_for_theta2, w_hat3_for_theta2])
+
+
+
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 6")
+    print("theta1 in degrees = ", theta_deg1)
+
+    print()
+    print("theta2 in degrees = ", theta_deg2)
+    
+    print()
+    print("[w1 hat bracket]: ")
+    print (w_hat_bracket1)
+
+    print()
+    print("[w2 hat bracket]: ")
+    print (w_hat_bracket2)
+
+# gets the rotation matrix R E SO(3) and a position vector p E R^3 and returns the 4x4 homogenous matrix T coressponding to them.
+def transformation_matrix():
+    global text
+    text = "Rotation Matrix"
+    enter_matrix()
+    R = matrix
+    r11 = R[0][0]
+    r12 = R[0][1]
+    r13 = R[0][2]
+
+    r21 = R[1][0]
+    r22 = R[1][1]
+    r23 = R[1][2]
+
+    r31 = R[2][0]
+    r32 = R[2][1]
+    r33 = R[2][2]
+
+    # global text 
+    text = "Position"
+    enter_vector()
+    P = vector
+    p1 = P[0]
+    p2 = P[1]
+    p3 = P[2]
+
+    T = np.array([[r11, r12, r13, p1],
+                  [r21, r22, r23, p2],
+                  [r31, r32, r33, p3],
+                  [ 0,   0,   0,   1]])
+    
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 7")
+    print("Transformation matrix")
+    print(T)
+
+# gets the 4x4 homogenous transformation matrix T and extract the 3x3 rotation matrix and 3x1 position vector from it.
+def rotation_matrix_and_position_vector():
+    global text
+    text = "Transformation Matrix"
+    enter_matrix()
+    T = matrix
+    R = np.array([[T[0][0], T[0][1], T[0][2]],
+                  [T[1][0], T[1][1], T[1][2]],
+                  [T[2][0], T[2][1], T[2][2]]])
+    P = [T[0][3], T[1][3], T[2][3]]
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 8")
+    print("Transformation matrix")
+    print(T)
+    print("Rotation matrix")
+    print(R)
+    print()
+    print("Positioin vector = ", P)
+
+# gets the 4x4 homogenous transformation matrix T and computes the inverse of it.
+def transformation_matrix_inverse():
+    global text
+    text = "Transformation Matrix"
+    enter_matrix()
+    T = np.array(matrix)
+    
+    T_transpose = T.transpose()
+    T_inv = np.linalg.inv(T)
+    
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 9")
+    print("T")
+    print (T)
+    print()
+    print("T_transpose")
+    print (T_transpose)
+    print()
+    print("T_inverse")
+    print (T_inv)  
+
+
+def enter_matrix():
+    R = int(input("Enter the number of rows:"))
+    C = int(input("Enter the number of columns:"))
+ 
+    # Initialize matrix
+    global matrix
+    matrix = []
+    print("Enter the entries rowwise:")
+ 
+    # For user input
+    for i in range(R):          # A for loop for row entries
+        a =[]
+        for j in range(C):      # A for loop for column entries
+            a.append(int(input()))
+        matrix.append(a)
+ 
+    # For printing the matrix
+    print("the", text,"you entered")
+    for i in range(R):
+        for j in range(C):
+            print(matrix[i][j], end = " ")
+        print()
+
+def enter_vector():
+    global vector
+    vector = []
+    X = int(input("Enter the X value of your vector "))
+    Y = int(input("Enter the Y value of your vector "))
+    Z = int(input("Enter the Z value of your vector "))
+    vector = np.array([X,Y,Z])
+    print("The ", text, "vector you entered is: ")
+    print(vector)
+
+
+def menu():
+    choice = input("Please select the operation you want to perform.\n\
+                   1. Gets the rotation matrix R and returns its inverse\n\
+                   2. Gets a 3-vector w_hat and gives back the 3x3 skew-symmetric matrix representation of it.\n\
+                   3. Gets the angle theta and the unit axis of rotation W_hat. Returns the rotation matrix representing the rotation about w_hat by theta.\n\
+                      This function should be able to handle the special cases of rotation operators about x_hat, y_hat, and z_hat.\n\
+                      Use Rodrigues' formula to write this function.\n\
+                   4. Gets the 3x3 skew-symmetric matrix representation of w_hat and returns the 3-verctor w_hat.\n\
+                   5. Gets the 3-vector exponential coordinates for rotation w_hat_theta and extracts the rotation axis w_hat and the rotation amount theta.\n\
+                   6. Gets a 3x3 rotation matrix R and finds the axis w_hat, and angle theta representation of it.\n\
+                   7. Gets the rotation matrix R E SO(3) and a position vector p E R^3 and returns the 4x4 homogenous matrix T coressponding to them.\n\
+                   8. Gets the 4x4 homogenous transformation matrix T and extract the 3x3 rotation matrix and 3x1 position vector from it.\n\
+                   9. Gets the 4x4 homogenous transformation matrix T and computes the inverse of it.\n\
+                   ")
+    choice = int(choice)
+ 
+    if choice == 1:
+        print("Gets the rotation matrix R and returns its inverse, please enter the rotation matrix R")
+        R_inverse()
+    elif choice == 2:
+        print("Gets a 3-vector w_hat and gives back the 3x3 skew-symmetric matrix representation of it.")
+        skew_symetric_matrix()
+    elif choice == 3:
+        print("Gets the angle theta and the unit axis of rotation W_hat. Returns the rotation matrix representing the rotation about w_hat by theta.\n\
+              This function should be able to handle the special cases of rotation operators about x_hat, y_hat, and z_hat.\n\
+              Use Rodrigues' formula to write this function.")
+        rotation_matrix()
+    elif choice == 4:
+        print("Gets the 3x3 skew-symmetric matrix representation of w_hat and returns the 3-verctor w_hat.")
+        w_hat_vector()
+    elif choice == 5:
+        print("Gets the 3-vector exponential coordinates for rotation w_hat_theta and extracts the rotation axis w_hat and the rotation amount theta.")
+        w_hat_and_rotation_theta()
+    elif choice == 6:
+        print("Gets a 3x3 rotation matrix R and finds the axis w_hat, and angle theta representation of it.")
+        w_hat_bracket_and_theta()
+    elif choice == 7:
+        print("Gets the rotation matrix R E SO(3) and a position vector p E R^3 and returns the 4x4 homogenous matrix T coressponding to them.")
+        transformation_matrix() 
+    elif choice == 8:
+        print("Gets the 4x4 homogenous transformation matrix T and extract the 3x3 rotation matrix and 3x1 position vector from it.")
+        rotation_matrix_and_position_vector()
+    elif choice == 9:
+        print("Gets the 4x4 homogenous transformation matrix T and computes the inverse of it")
+        transformation_matrix_inverse()         
+    else:
+        print("Wrong Choice, run the program again.")
+
+menu()
