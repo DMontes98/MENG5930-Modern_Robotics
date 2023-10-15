@@ -314,7 +314,7 @@ def enter_matrix():
         matrix.append(a)
  
     # For printing the matrix
-    print("the", text,"you entered")
+    print("The", text,"you entered")
     for i in range(R):
         for j in range(C):
             print(matrix[i][j], end = " ")
