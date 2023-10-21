@@ -296,6 +296,174 @@ def transformation_matrix_inverse():
     print("T_inverse")
     print (T_inv)  
 
+# gets a 3-vector and returns its homogenous coordinates.
+def homogeneous_coordinates():
+    global text
+    text = "position"
+    enter_vector()
+    V = np.array([vector[0],vector[1], vector[2],1])
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 10")
+    print("Homogeneous coordinates")
+    print (V)
+    print()
+
+# gets the 4x4 homogenous transformation matrix T and computes its 6x6 adjoint representation [Adt].
+def adjoint_representation():
+    global text
+    text = "Homogeneous transformation matrix"
+    enter_matrix()
+    T = matrix
+ 
+    R = np.array([[T[0][0], T[0][1], T[0][2]],
+                  [T[1][0], T[1][1], T[1][2]],
+                  [T[2][0], T[2][1], T[2][2]]])
+    p = [T[0][3], T[1][3], T[2][3]]
+
+    Adt = np.zeros((6, 6))
+    
+    Adt[:3, :3] = R
+    Adt[3:6, 3:6] = R
+    Adt[:3, 3:6] = np.cross(p, R)
+    
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 11")
+    print("Adjoint representation")
+    print (Adt)
+    print()
+
+# gets the 6-vector exponential coordinates of motion Sq and extracts the normalized screw axis S and the distance traveled along the screw q.
+def distance_traveled_along_screw():
+    global vector
+    vector = []
+    SwX = float(input("Enter the X value of your angular component "))
+    SwY = float(input("Enter the Y value of your angular component "))
+    SwZ = float(input("Enter the Z value of your angular component "))
+    
+    SvX = float(input("Enter the X value of your linear component "))
+    SvY = float(input("Enter the Y value of your linear component "))
+    SvZ = float(input("Enter the Z value of your linear component "))
+
+    Sq = np.array([SwX,SwY,SwZ, SvX, SvY, SvZ])
+    print("The exponential coordinates of motion vector you entered is: ")
+    print(Sq)
+
+    w = np.array([SwX,SwY,SwZ])
+    v = np.array([SvX, SvY, SvZ])
+
+    w_norm = np.linalg.norm(w)
+   
+    if w_norm != 0:
+        w = w / w_norm
+    
+    q = np.dot(w, v) / w_norm
+
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 12")
+    print("Normalized Screw Axis (S):", w)
+    print("Distance Traveled along Screw (q):", q)
+    print()
+
+# gets the 6-vector screw axis and computes the matrix representation of it.
+def screw_axis_matrix():
+    global vector
+    vector = []
+    SwX = float(input("Enter the X value of your angular component "))
+    SwY = float(input("Enter the Y value of your angular component "))
+    SwZ = float(input("Enter the Z value of your angular component "))
+    
+    SvX = float(input("Enter the X value of your linear component "))
+    SvY = float(input("Enter the Y value of your linear component "))
+    SvZ = float(input("Enter the Z value of your linear component "))
+
+    Sq = np.array([SwX,SwY,SwZ, SvX, SvY, SvZ])
+    print("The exponential coordinates of motion vector you entered is: ")
+    print(Sq)
+
+    w = np.array([SwX,SwY,SwZ])
+    v = np.array([SvX, SvY, SvZ])
+
+    S_matrix = np.zeros((4, 4))
+    S_matrix[:3, :3] = np.array([[0, -w[2], w[1]],
+                                 [w[2], 0, -w[0]],
+                                 [-w[1], w[0], 0]])
+    S_matrix[:3, 3] = v
+    S_matrix[3, :3] = 0
+
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 13")
+    print("S matrix")
+    print(S_matrix)
+    print()
+
+# gets the screw axis S and q and calculates the corresponding homogenous transformation matrix T e SE(3).
+def homogeneous_transformation_matrix():
+    global vector
+    vector = []
+    SwX = float(input("Enter the X value of your angular component "))
+    SwY = float(input("Enter the Y value of your angular component "))
+    SwZ = float(input("Enter the Z value of your angular component "))
+    
+    SvX = float(input("Enter the X value of your linear component "))
+    SvY = float(input("Enter the Y value of your linear component "))
+    SvZ = float(input("Enter the Z value of your linear component "))
+
+    q = float(input("Enter the q value "))
+
+    Sq = np.array([SwX,SwY,SwZ, SvX, SvY, SvZ])
+    print("The exponential coordinates of motion vector you entered is: ")
+    print(Sq)
+    w = np.array([SwX,SwY,SwZ])
+    v = np.array([SvX, SvY, SvZ])
+
+    w_matrix = np.array([[0, -w[2], w[1]],
+                         [w[2], 0, -w[0]],
+                         [-w[1], w[0], 0]])
+
+
+    R = np.eye(3) + w_matrix * np.sin(np.linalg.norm(w) * q) + \
+        np.dot(w_matrix, w_matrix) * (1 - np.cos(np.linalg.norm(w) * q))
+
+
+    p = (np.eye(3) - R).dot(np.cross(w, v)) + np.outer(w, np.dot(w, v)) * q
+
+    T = np.array([[R[0][0], R[0][1], R[0][2], p[0][0]],
+                  [R[1][0], R[1][1], R[1][2], p[1][1]],
+                  [R[2][0], R[2][1], R[2][2], p[2][2]],
+                  [   0   ,     0  ,     0  ,    1]])
+
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 14")
+    print("Homogeneous transformation matrix")
+    print(T)
+    print()
+
+# gets the 4x4 homogenous transformation matrix and computes the screw axis and q.
+def screw_axis_and_q():
+    global text
+    text = "homogenous transformation matrix"
+    enter_matrix()
+    T = matrix
+    R = np.array([[T[0][0], T[0][1], T[0][2]],
+                  [T[1][0], T[1][1], T[1][2]],
+                  [T[2][0], T[2][1], T[2][2]]])
+    p = [T[0][3], T[1][3], T[2][3]]
+   
+    theta = np.arccos((np.trace(R) - 1) / 2)
+    w = (1 / (2 * np.sin(theta))) * np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])
+
+    
+    v = (np.eye(3) - R).dot(p) / theta
+
+    q = np.linalg.norm(p)
+    S = np.concatenate((w, v))
+
+    print("--------------------------------------------------------------------------------")
+    print("Excercise 15")
+    print("Screw Axis (S):", S)
+    print("Displacement (q):", q)
+    print()
+
 
 def enter_matrix():
     R = int(input("Enter the number of rows:"))
@@ -310,11 +478,11 @@ def enter_matrix():
     for i in range(R):          # A for loop for row entries
         a =[]
         for j in range(C):      # A for loop for column entries
-            a.append(int(input()))
+            a.append(float(input()))
         matrix.append(a)
  
     # For printing the matrix
-    print("The", text,"you entered")
+    print("the", text,"you entered")
     for i in range(R):
         for j in range(C):
             print(matrix[i][j], end = " ")
@@ -323,9 +491,9 @@ def enter_matrix():
 def enter_vector():
     global vector
     vector = []
-    X = int(input("Enter the X value of your vector "))
-    Y = int(input("Enter the Y value of your vector "))
-    Z = int(input("Enter the Z value of your vector "))
+    X = float(input("Enter the X value of your vector "))
+    Y = float(input("Enter the Y value of your vector "))
+    Z = float(input("Enter the Z value of your vector "))
     vector = np.array([X,Y,Z])
     print("The ", text, "vector you entered is: ")
     print(vector)
@@ -344,6 +512,12 @@ def menu():
                    7. Gets the rotation matrix R E SO(3) and a position vector p E R^3 and returns the 4x4 homogenous matrix T coressponding to them.\n\
                    8. Gets the 4x4 homogenous transformation matrix T and extract the 3x3 rotation matrix and 3x1 position vector from it.\n\
                    9. Gets the 4x4 homogenous transformation matrix T and computes the inverse of it.\n\
+                   10. Gets a 3-vector and returns its homogenous coordinates.\n\
+                   11. Gets the 4x4 homogenous transformation matrix T and computes its 6x6 adjoint representation [Adt].\n\
+                   12. Gets the 6-vector exponential coordinates of motion Sq and extracts the normalized screw axis S and the distance traveled along the screw q.\n\
+                   13. Gets the 6-vector screw axis and computes the matrix representation of it.\n\
+                   14. Gets the screw axis S and q and calculates the corresponding homogenous transformation matrix T e SE(3).\n\
+                   15. Gets the 4x4 homogenous transformation matrix and computes the screw axis and q.\n\
                    ")
     choice = int(choice)
  
@@ -375,7 +549,25 @@ def menu():
         rotation_matrix_and_position_vector()
     elif choice == 9:
         print("Gets the 4x4 homogenous transformation matrix T and computes the inverse of it")
-        transformation_matrix_inverse()         
+        transformation_matrix_inverse()     
+    elif choice == 10:
+        print("Gets a 3-vector and returns its homogenous coordinates.")    
+        homogeneous_coordinates()
+    elif choice == 11:
+        print("Gets the 4x4 homogenous transformation matrix T and computes its 6x6 adjoint representation [Adt].")
+        adjoint_representation()
+    elif choice == 12:
+        print("Gets the 6-vector exponential coordinates of motion Sq and extracts the normalized screw axis S and the distance traveled along the screw q.")
+        distance_traveled_along_screw()
+    elif choice == 13:
+        print("Gets the 6-vector screw axis and computes the matrix representation of it.")
+        screw_axis_matrix()
+    elif choice == 14:
+        print("Gets the screw axis S and q and calculates the corresponding homogenous transformation matrix T e SE(3).")
+        homogeneous_transformation_matrix()
+    elif choice == 15:
+        print("Gets the 4x4 homogenous transformation matrix and computes the screw axis and q.")
+        screw_axis_and_q()
     else:
         print("Wrong Choice, run the program again.")
 
