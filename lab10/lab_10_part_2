@@ -4,9 +4,14 @@ import numpy as np
 def FK_PoE(q, a, rot, jt, M):
     T = POE(q, a, rot, jt)
     Tf = np.dot(T, M)
+    print(Tf)
 
     R = Tf[:3, :3]
+    # R = M[:3, :3]
     p = Tf[:3, 3]
+    # p = M[:3, 3]
+    # print("Rotation Matrix (R):\n", R)
+    # print("Position (p):\n", p)
 
     return R, p
 
@@ -26,20 +31,21 @@ def POE(q, a, rot, jt):
             rot_hat = np.zeros((3, 3))
             e_rot_hat = np.eye(3)
 
-
-        if jt[ii] == 'R' and ii>1:
+        if jt[ii] == 'R' and ii>0:
             Sv = -np.transpose(np.cross(rot[ii, :], a[ii, :]))
-        elif jt[ii] == 'R' and ii == 1:
+        elif jt[ii] == 'R' and ii == 0:
             Sv = [0,0,0]
         elif jt[ii] == 'P':
             Sv = a[ii, :]
 
-        p = (np.eye(3) * q[ii] + (1 - np.cos(q[ii])) * rot_hat + (q[ii] - np.sin(q[ii])) * rot_hat.dot(rot_hat)).dot(Sv)
+        p = (np.eye(3) * q[ii] + (1 - np.cos(q[ii])) * rot_hat + (q[ii] - np.sin(q[ii])) * (rot_hat @ rot_hat)) @ Sv
 
         e_zai = np.vstack((np.hstack((e_rot_hat, p[:, np.newaxis])), np.array([0, 0, 0, 1])))
 
         T = np.dot(e_zai, T)
-
+    # print(p)
+    # print("T:\n", T)
+    # print(e_rot_hat)
     return T
 
 t1 = 0
